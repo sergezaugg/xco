@@ -2,8 +2,6 @@
 # Author : Serge Zaugg
 # Description : Demo example of xco usage in practice
 # For dev : import src.xeno_canto_organizer.xco as xco
-# install xco package from github
-# pip install https://github.com/sergezaugg/xeno_canto_organizer/releases/download/vx.x.x/xeno_canto_organizer-x.x.x-py3-none-any.whl
 # --------------
 
 # --------------------------

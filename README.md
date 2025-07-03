@@ -25,7 +25,7 @@
 ## Installation (for project usage)
 - Make a fresh venv: ``` python -m venv ./ ```
 - Install the downloaded package: 
-- e.g. ```pip install https://github.com/sergezaugg/xeno_canto_organizer/releases/download/vx.x.x/xeno_canto_organizer-x.x.x-py3-none-any.whl```
+- e.g. ```pip install https://github.com/sergezaugg/xco/releases/download/vx.x.x/xeno_canto_organizer-x.x.x-py3-none-any.whl```
 
 ## Usage 
 - Minimal example of usage shown below and a longer example [here](sample_code.py)
