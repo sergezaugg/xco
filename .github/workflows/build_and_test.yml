@@ -2,7 +2,7 @@ name: build_and_test
 
 on:
   pull_request:
-    branches: [ "master" ] # .... 
+    branches: [ "main" ] # .... 
   # push:  
   #   branches: [ "devel" ] # temp 
   workflow_dispatch:  
