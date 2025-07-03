@@ -5,8 +5,6 @@
 __pycache__
 temp_xc_project
 .pytest_cache
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
