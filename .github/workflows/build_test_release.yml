@@ -1,0 +1,68 @@
+name: build_test_release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build_release_on_new_tag:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}    
+
+      - name: get some info
+        run: |
+          pwd 
+          python -V 
+
+      # Build ----------------
+      - name: Build
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+
+      # Test ----------------
+      - name: Install dependencies for testing 
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          python -m pip install dist/*.whl
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Verify FFmpeg
+        run: ffmpeg -version    
+
+      - name: get pip list
+        run: pip list   
+
+      - name: Run tests 
+        run: |
+          pytest -s
+
+      # Release ----------------
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
