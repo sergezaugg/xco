@@ -28,7 +28,6 @@ class XCO():
         self.XC_API_URL = XC_API_URL
         self.start_path = start_path 
         self.download_tag = 'downloaded_data' 
-        # self.df_recs = "not yet initializes"
         self.recs_pool = []
 
     #----------------------------------
@@ -204,7 +203,6 @@ class XCO():
             # write file to disc
             open(os.path.join(source_path, finam2 + '.mp3') , 'wb').write(rq.content)
             new_filename.append(finam2)
-            # row_i['finam2'] = finam2
         # print(new_filename)
         df_all_extended = self.df_recs
         df_all_extended['file_name_stub'] = new_filename 
