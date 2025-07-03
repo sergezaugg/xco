@@ -52,7 +52,7 @@ xc.extract_spectrograms(
     segm_step = 0.5, 
     win_siz = 512, 
     win_olap = 192, 
-    max_segm_per_file = 12, 
+    max_segm_per_file = 10, 
     specsub = True, 
     colormap='viridis',
     verbose=True

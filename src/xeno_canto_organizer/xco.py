@@ -246,12 +246,12 @@ class XCO():
                 except:
                     print("An exception occurred during mp3-to-wav conversion with ffmpeg!")
                     self.failed_wav_conv_li.append(finam)
-            # finishin up        
+            # finishing up        
             n_fails = len(self.failed_wav_conv_li)        
             print("Done! successfully converted: " + str(ii+1-n_fails) + ' files' + ', failed: ' + str(n_fails))
 
     def extract_spectrograms(self, fs_tag, segm_duration, segm_step = 1.0, win_siz = 256, win_olap = 128,  
-                             specsub = True, max_segm_per_file = 100, colormap = 'gray', eps = 1e-10, verbose = False):
+                             specsub = True, max_segm_per_file = None, colormap = 'gray', eps = 1e-10, verbose = False):
         """
         Description : Process wav file by segments, for each segment makes a spectrogram, and saves a PNG
         Arguments : 
@@ -338,8 +338,9 @@ class XCO():
 
                 for ii in np.arange(0, (totNbSegments - 0.99), segm_step):
                     # print(ii)
-                    if ii+1 >= max_segm_per_file:
-                        break 
+                    if max_segm_per_file is not None:
+                        if ii+1 >= max_segm_per_file:
+                            break 
                     try:
                         startSec = ii*segm_duration
                         sig = self._read_piece_of_wav(f = wavFileName, start_sec = startSec, durat_sec = segm_duration)
