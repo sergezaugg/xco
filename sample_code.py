@@ -75,11 +75,3 @@ xc.extract_spectrograms(fs_tag = 20000, segm_duration = 0.202, segm_step = 0.5, 
 xc.mp3_to_wav(conversion_fs = 16000)
 xc.extract_spectrograms(fs_tag = 16000, segm_duration = 1.738, segm_step = 0.95, win_siz = 256, win_olap = 220.00, max_segm_per_file = 20, 
                         specsub = False, colormap='viridis')
-
-
-
-
-
-
-
-
