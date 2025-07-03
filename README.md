@@ -61,12 +61,10 @@ xc.extract_spectrograms(fs_tag = 24000, segm_duration = 2.0, segm_step = 0.5,
 <img src="images/spectros_003.png" width="400" />
 <figcaption>(spectral subtraction 3-ch color, spectral subtraction 1-ch gray, 3-ch color)</figcaption>
 
-
 ## Why save spectrogram of sounds as PNG images
 * It is handy because many PyTorch models and data augmentation procedures can directly ingest PNGs
 * It is handy because images can be easily visualized with standard software
 * Yes, 3-channel is an overkill but easier to be ingested by Image CNNs such as ResNet and co
-
 
 ## Project Structure
 ```
