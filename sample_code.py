@@ -26,6 +26,11 @@ print(len(xc.recs_pool))
 xc.download_summary(gen = "Coloeus", cnt = "switzerland", q = "A",len_max = 100 , verbose=True)
 print(len(xc.recs_pool))
 
+xc.download_summary(fam = "Corvidae", q = "A",len_max = 10 , verbose=True)
+print(len(xc.recs_pool))
+xc.download_summary(area = "Europe", q = "A", len_min = 10, len_max = 11 , verbose=True)
+print(len(xc.recs_pool))
+
 # sequential queries can be wrappd into a loop 
 for g in ["Corvus", "Pyrrhocorax", "Coloeus", "Garrulus", "Pica"]:
     xc.download_summary(gen = g, cnt = "France", q = "A", len_min = 5, len_max = 10)

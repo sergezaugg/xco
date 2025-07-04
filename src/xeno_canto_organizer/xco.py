@@ -109,7 +109,9 @@ class XCO():
     def download_summary(self, 
         gen = None,
         sp = None,
+        fam = None,
         cnt = None,
+        area = None,
         q = None,
         len_min = None,
         len_max = None ,
@@ -134,16 +136,22 @@ class XCO():
         # handle when argument was not provided
         gen_p        = 'gen:'  + aq(gen)          if gen      is not None else ""
         sp_p         = 'sp:'   + aq(sp)           if sp       is not None else ""
+        fam_p        = 'fam:'  + aq(fam)          if fam      is not None else "" # NEW 
         cnt_p        = 'cnt:'  + aq(cnt)          if cnt      is not None else ""
+        area_p       = 'area:' + aq(area)         if area     is not None else "" # NEW 
         q_p          = 'q:'    + aq(q)            if q        is not None else ""
         len_min_p    = 'len:'  + nq_min(len_min)  if len_min  is not None else ""
         len_max_p    = 'len:'  + nq_max(len_max)  if len_max  is not None else ""
+
+
+        # smp
+
         # start 
         last_page_reached = False
         page_counter = '&page=1'
         while not last_page_reached: 
             # construct final query key
-            query_string = '?query=' + gen_p + sp_p + cnt_p + q_p + len_min_p + len_max_p + page_counter + '&key=' + self.__apikey
+            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + page_counter + '&key=' + self.__apikey
             full_query_string = self.XC_API_URL + query_string
             # API requests:
             r = requests.get(full_query_string, allow_redirects=True)
