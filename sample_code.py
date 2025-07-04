@@ -23,7 +23,7 @@ xc.download_summary(gen = "Corvus", cnt = "switzerland", q = "A", len_max = 14, 
 print(len(xc.recs_pool))
 xc.download_summary(gen = "Pyrrhocorax", cnt = "switzerland", q = "B", len_min = 10, verbose=True)
 print(len(xc.recs_pool))
-xc.download_summary(gen = "Coloeus", cnt = "switzerland", q = "C",len_max = 100 , verbose=True)
+xc.download_summary(gen = "Coloeus", cnt = "switzerland", q = "A",len_max = 100 , verbose=True)
 print(len(xc.recs_pool))
 
 # sequential queries can be wrappd into a loop 
@@ -52,22 +52,12 @@ xc.extract_spectrograms(
     segm_step = 0.5, 
     win_siz = 512, 
     win_olap = 192, 
-    max_segm_per_file = 10, 
+    max_segm_per_file = 5, 
     specsub = True, 
-    log_f_min = 0.005,
+    log_f_min = 0.02,
     colormap='viridis',
     verbose=True
     )
-
-
-# xx = xc.tempX
-# xx.shape
-# yy = log_scale_spectrogram(S = xx, fmin=0.0001, bins=512)
-# yy.shape
-
-
-
-
 
 #---------------------------------------
 # Open a new session

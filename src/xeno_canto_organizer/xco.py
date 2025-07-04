@@ -385,7 +385,7 @@ class XCO():
                         if log_f_min is not None:
                             X = self._log_scale_spectrogram(S = X, fmin=log_f_min, bins=X.shape[0])
 
-                        # transpose
+                        # flip
                         X = np.flip(X, axis=0) # so that high freqs at top of image 
                         # print('flip:' , X.shape)
 

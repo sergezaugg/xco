@@ -40,7 +40,6 @@ xc.extract_spectrograms(fs_tag = 24000, segm_duration = 1.0, segm_step = 0.5, wi
     log_f_min = 0.005,
     max_segm_per_file = 12, specsub = True, colormap='viridis',verbose=True)
 
-
 #----------------------------------------------
 # perform the tests
 

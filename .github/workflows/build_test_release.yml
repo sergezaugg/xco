@@ -55,7 +55,7 @@ jobs:
 
       - name: Run tests 
         run: |
-          pytest -s
+          pytest -vv -s
 
       # Release ----------------
       - name: Create GitHub Release
