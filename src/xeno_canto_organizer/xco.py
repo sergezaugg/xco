@@ -142,10 +142,10 @@ class XCO():
         cnt_p        = 'cnt:'  + aq(cnt)          if cnt      is not None else ""
         area_p       = 'area:' + aq(area)         if area     is not None else "" # NEW 
         q_p          = 'q:'    + aq(q)            if q        is not None else ""
-        len_min_p    = 'len:'  + nq_min(len_min)  if len_min  is not None else ""
-        len_max_p    = 'len:'  + nq_max(len_max)  if len_max  is not None else ""
-        smp_min_p    = 'smp:'  + nq_min(smp_min)  if smp_min  is not None else "" # NEW 
-        smp_max_p    = 'smp:'  + nq_max(smp_max)  if smp_max  is not None else "" # NEW 
+        len_min_p    = 'len:'  + nq_min(len_min-1)  if len_min  is not None else ""
+        len_max_p    = 'len:'  + nq_max(len_max+1)  if len_max  is not None else ""
+        smp_min_p    = 'smp:'  + nq_min(smp_min-1)  if smp_min  is not None else "" # NEW 
+        smp_max_p    = 'smp:'  + nq_max(smp_max+1)  if smp_max  is not None else "" # NEW 
         # start 
         last_page_reached = False
         page_counter = '&page=1'

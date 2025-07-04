@@ -23,15 +23,15 @@ make_temp_dir('03')
 # (Example 1) custom search can be run sequentially - xc.recs_pool accumulates the meta-data 
 # On first use of download_summary xc api key must be provided
 xc = xco.XCO(start_path = './temp_xc_project_01')
-xc.download_summary(gen = "Corvus", sp = "corax", cnt = "switzerland", q = "A", len_max = 200, verbose=True)
-xc.download_summary(gen = "Pyrrhocorax", cnt = "France", q = "B", len_min = 10, verbose=True)
-xc.download_summary(gen = "Coloeus", cnt = "Belgium", q = "C", len_max = 100 , verbose=True)
+xc.download_summary(gen = "Corvus", sp = "corax", cnt = "switzerland", q = "A", len_max = 200, smp_min = 48000, smp_max = 48000, verbose=True)
+xc.download_summary(gen = "Pyrrhocorax", cnt = "France", q = "B", len_min = 10, smp_min = 48000, smp_max = 48000, verbose=True)
+xc.download_summary(gen = "Coloeus", cnt = "Belgium", q = "C", len_max = 100 , smp_min = 48000, smp_max = 48000, verbose=True)
 print(len(xc.recs_pool))
 xc.compile_df_and_save(verbose = True)
 # get some summaries 
 print(xc.df_recs['full_spec_name'].value_counts())
 print(xc.df_recs['gen'].value_counts())
-print(xc.df_recs['cnt'].value_counts())
+print(xc.df_recs['smp'].value_counts())
 # if session was closed
 xc.reload_local_summary()
 # Download the mp3 files 
@@ -40,7 +40,7 @@ xc.download_audio_files(verbose=True)
 xc.mp3_to_wav(conversion_fs = 24000)
 # Extract spectrograms from segments and store as PNG
 xc.extract_spectrograms(fs_tag = 24000, segm_duration = 2.0, segm_step = 0.5, win_siz = 512, win_olap = 256, 
-    max_segm_per_file = 10, specsub = True, log_f_min = 0.02, colormap='viridis',verbose=True)
+                        max_segm_per_file = 10, specsub = True, log_f_min = 0.02, colormap='viridis',verbose=True)
 
 
 #---------------------------------
@@ -63,3 +63,6 @@ xc.download_audio_files(verbose=True)
 xc.mp3_to_wav(conversion_fs = 16000)
 xc.extract_spectrograms(fs_tag = 16000, segm_duration = 1.738, segm_step = 0.95, win_siz = 256, win_olap = 220.00, 
                         max_segm_per_file = 20, log_f_min = 0.005, specsub = False, colormap='viridis')
+
+
+
