@@ -356,6 +356,7 @@ class XCO():
                             break 
                     try:
                         startSec = ii*segm_duration
+                        print("wavFileName", wavFileName)
                         sig = self._read_piece_of_wav(f = wavFileName, start_sec = startSec, durat_sec = segm_duration)
                         sig = sig - sig.mean() # de-mean
                         # compute spectrogram
