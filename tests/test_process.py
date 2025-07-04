@@ -25,7 +25,7 @@ except:
     "ok"
 if not os.path.isdir(path_for_tests_only):
     os.makedirs(path_for_tests_only)
-shutil.copy('test_data/summary_of_data.pkl', 'temp_xc_project/summary_of_data.pkl')
+shutil.copy('tests/test_data/summary_of_data.pkl', 'temp_xc_project/summary_of_data.pkl')
 
 
 #----------------------------------------------

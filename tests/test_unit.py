@@ -17,14 +17,15 @@ except: # for using test during local dev
     import src.xeno_canto_organizer.xco as xco
     pkg_import_source = src.xeno_canto_organizer.__file__
 
-
-
 #----------------------------------------------
 # create objects to be tested
 xc = xco.XCO(start_path = "aaa") 
 str_dirty = "+++///Le_p%%eti(t_chi)èn_Milöu-vöüs_di(=)t_pi**pi_çac`^a.mp3"
 str_cleaned_long  = xc._clean_xc_filenames(s = str_dirty, max_string_size = 999)
 str_cleaned_short = xc._clean_xc_filenames(s = str_dirty, max_string_size = 10)
+
+#----------------------------------------------
+# perform unit tests
 
 def test_clean_xc_filenames():
     assert str_cleaned_long == 'Le_petit_chien_Milou_vous_dit_pipi_caca'
