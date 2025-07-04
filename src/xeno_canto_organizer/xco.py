@@ -12,29 +12,13 @@ import unidecode
 import numpy as np 
 import wave
 import scipy.signal as sgn 
+from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt  
 from PIL import Image
 import struct
 import subprocess
 import datetime
 import getpass
-from scipy.interpolate import interp1d
-
-
-# draft provied by https://chatgpt.com, edited by Serge
-def log_scale_spectrogram(S, fmin=0.01, bins=128):
-    """
-    """
-    n_freqs, _ = S.shape
-    lin_freqs = np.linspace(0, 0.5, n_freqs)
-    log_freqs = np.logspace(np.log10(fmin), np.log10(0.5), bins)
-    # Interpolator over the frequency axis
-    interp_func = interp1d(lin_freqs, S, axis=0, bounds_error=False, fill_value=0.0)
-    S_log = interp_func(log_freqs)
-    return(S_log) 
-
-
-
 
 class XCO():
 
@@ -106,6 +90,20 @@ class XCO():
         sig = sig / ((2**(sampwidth*8))/2)
         # return 
         return(sig)
+
+    def _log_scale_spectrogram(self, S, fmin=0.01, bins=128):
+        # draft provied by https://chatgpt.com, edited by Serge
+        """
+        """
+        n_freqs, _ = S.shape
+        lin_freqs = np.linspace(0, 0.5, n_freqs)
+        log_freqs = np.logspace(np.log10(fmin), np.log10(0.5), bins)
+        # Interpolator over the frequency axis
+        interp_func = interp1d(lin_freqs, S, axis=0, bounds_error=False, fill_value=0.0)
+        S_log = interp_func(log_freqs)
+        return(S_log) 
+
+
 
     #----------------------------------
     # (2) main methods 
@@ -385,7 +383,7 @@ class XCO():
 
                         # log mapping of freqs
                         if log_f_min is not None:
-                            X = log_scale_spectrogram(S = X, fmin=log_f_min, bins=X.shape[0])
+                            X = self._log_scale_spectrogram(S = X, fmin=log_f_min, bins=X.shape[0])
 
                         # transpose
                         X = np.flip(X, axis=0) # so that high freqs at top of image 

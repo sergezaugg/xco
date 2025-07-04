@@ -53,6 +53,7 @@ xc.extract_spectrograms(
     win_olap = 192, 
     max_segm_per_file = 12, 
     specsub = True, 
+    log_f_min = 0.005,
     colormap='viridis',
     verbose=True
     )
