@@ -1,6 +1,6 @@
 # -------------
 # Author : Serge Zaugg
-# Description : Main functionality of this codebase
+# Description : Main functionality of codebase
 # -------------
 
 import os
@@ -102,8 +102,6 @@ class XCO():
         interp_func = interp1d(lin_freqs, S, axis=0, bounds_error=False, fill_value=0.0)
         S_log = interp_func(log_freqs)
         return(S_log) 
-
-
 
     #----------------------------------
     # (2) main methods 
@@ -422,9 +420,3 @@ class XCO():
 # devel code - supress execution if this is imported as module 
 if __name__ == "__main__":
     plt.colormaps()
-    xc = XCO(start_path = "aaa") 
-    xc._clean_xc_filenames(s = "öüä%&/sdf__caca_.55&/())äöüöä5.mp3", max_string_size = 20)
-
-    
-
-
