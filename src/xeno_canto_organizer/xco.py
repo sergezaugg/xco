@@ -114,7 +114,9 @@ class XCO():
         area = None,
         q = None,
         len_min = None,
-        len_max = None ,
+        len_max = None,
+        smp_min = None,
+        smp_max = None,
         verbose = False,
         # full_query_string = None
         ):
@@ -142,16 +144,14 @@ class XCO():
         q_p          = 'q:'    + aq(q)            if q        is not None else ""
         len_min_p    = 'len:'  + nq_min(len_min)  if len_min  is not None else ""
         len_max_p    = 'len:'  + nq_max(len_max)  if len_max  is not None else ""
-
-
-        # smp
-
+        smp_min_p    = 'smp:'  + nq_min(smp_min)  if smp_min  is not None else "" # NEW 
+        smp_max_p    = 'smp:'  + nq_max(smp_max)  if smp_max  is not None else "" # NEW 
         # start 
         last_page_reached = False
         page_counter = '&page=1'
         while not last_page_reached: 
             # construct final query key
-            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + page_counter + '&key=' + self.__apikey
+            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter + '&key=' + self.__apikey
             full_query_string = self.XC_API_URL + query_string
             # API requests:
             r = requests.get(full_query_string, allow_redirects=True)

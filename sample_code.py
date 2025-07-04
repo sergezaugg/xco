@@ -25,10 +25,9 @@ xc.download_summary(gen = "Pyrrhocorax", cnt = "switzerland", q = "B", len_min =
 print(len(xc.recs_pool))
 xc.download_summary(gen = "Coloeus", cnt = "switzerland", q = "A",len_max = 100 , verbose=True)
 print(len(xc.recs_pool))
-
 xc.download_summary(fam = "Corvidae", q = "A",len_max = 10 , verbose=True)
 print(len(xc.recs_pool))
-xc.download_summary(area = "Europe", q = "A", len_min = 10, len_max = 11 , verbose=True)
+xc.download_summary(gen = "Corvus", area = "Europe", q = "A", smp_min = 23000, smp_max = 24001, verbose=True)
 print(len(xc.recs_pool))
 
 # sequential queries can be wrappd into a loop 
@@ -43,6 +42,8 @@ xc.df_recs.shape
 print(xc.df_recs['gen'].value_counts())
 print(xc.df_recs['q'].value_counts())
 print(xc.df_recs['lic'].value_counts())
+print(xc.df_recs['smp'].value_counts())
+
 print(xc.df_recs['full_spec_name'].value_counts())
 # if session was closed
 xc.reload_local_summary()
