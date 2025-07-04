@@ -1,6 +1,6 @@
 # -------------
 # Author : Serge Zaugg
-# Description : Main functionality of this codebase
+# Description : Main functionality of codebase
 # -------------
 
 import os
@@ -12,6 +12,7 @@ import unidecode
 import numpy as np 
 import wave
 import scipy.signal as sgn 
+from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt  
 from PIL import Image
 import struct
@@ -28,7 +29,6 @@ class XCO():
         self.XC_API_URL = XC_API_URL
         self.start_path = start_path 
         self.download_tag = 'downloaded_data' 
-        # self.df_recs = "not yet initializes"
         self.recs_pool = []
 
     #----------------------------------
@@ -90,6 +90,18 @@ class XCO():
         sig = sig / ((2**(sampwidth*8))/2)
         # return 
         return(sig)
+
+    def _log_scale_spectrogram(self, S, fmin=0.01, bins=128):
+        # draft provied by https://chatgpt.com, edited by Serge
+        """
+        """
+        n_freqs, _ = S.shape
+        lin_freqs = np.linspace(0, 0.5, n_freqs)
+        log_freqs = np.logspace(np.log10(fmin), np.log10(0.5), bins)
+        # Interpolator over the frequency axis
+        interp_func = interp1d(lin_freqs, S, axis=0, bounds_error=False, fill_value=0.0)
+        S_log = interp_func(log_freqs)
+        return(S_log) 
 
     #----------------------------------
     # (2) main methods 
@@ -204,7 +216,6 @@ class XCO():
             # write file to disc
             open(os.path.join(source_path, finam2 + '.mp3') , 'wb').write(rq.content)
             new_filename.append(finam2)
-            # row_i['finam2'] = finam2
         # print(new_filename)
         df_all_extended = self.df_recs
         df_all_extended['file_name_stub'] = new_filename 
@@ -246,12 +257,12 @@ class XCO():
                 except:
                     print("An exception occurred during mp3-to-wav conversion with ffmpeg!")
                     self.failed_wav_conv_li.append(finam)
-            # finishin up        
+            # finishing up        
             n_fails = len(self.failed_wav_conv_li)        
             print("Done! successfully converted: " + str(ii+1-n_fails) + ' files' + ', failed: ' + str(n_fails))
 
     def extract_spectrograms(self, fs_tag, segm_duration, segm_step = 1.0, win_siz = 256, win_olap = 128,  
-                             specsub = True, max_segm_per_file = 100, colormap = 'gray', eps = 1e-10, verbose = False):
+                             specsub = True, log_f_min = None, max_segm_per_file = None, colormap = 'gray', eps = 1e-10, verbose = False):
         """
         Description : Process wav file by segments, for each segment makes a spectrogram, and saves a PNG
         Arguments : 
@@ -338,10 +349,12 @@ class XCO():
 
                 for ii in np.arange(0, (totNbSegments - 0.99), segm_step):
                     # print(ii)
-                    if ii+1 >= max_segm_per_file:
-                        break 
+                    if max_segm_per_file is not None:
+                        if ii+1 >= max_segm_per_file:
+                            break 
                     try:
                         startSec = ii*segm_duration
+                        print("wavFileName", wavFileName)
                         sig = self._read_piece_of_wav(f = wavFileName, start_sec = startSec, durat_sec = segm_duration)
                         sig = sig - sig.mean() # de-mean
                         # compute spectrogram
@@ -357,15 +370,24 @@ class XCO():
                             mode = 'psd')
                         # remove nyquist freq
                         X = X[:-1, :]
-                        # transpose, spectral spectral subtraction and log-transform 
-                        X = np.flip(X, axis=0) # so that high freqs at top of image 
-
+                           
+                        # log-transform 
                         X = np.log10(X + eps)
 
+                        # spectral subtraction
                         if specsub:
                             noise_magnitude = np.median(X, axis=1, keepdims=True)
                             X = X - noise_magnitude
                             X = np.maximum(X, 0.0)  
+
+                        # log mapping of freqs
+                        if log_f_min is not None:
+                            X = self._log_scale_spectrogram(S = X, fmin=log_f_min, bins=X.shape[0])
+
+                        # flip
+                        X = np.flip(X, axis=0) # so that high freqs at top of image 
+                        # print('flip:' , X.shape)
+
 
                         # normalize 
                         X = X - X.min()
@@ -398,9 +420,3 @@ class XCO():
 # devel code - supress execution if this is imported as module 
 if __name__ == "__main__":
     plt.colormaps()
-    xc = XCO(start_path = "aaa") 
-    xc._clean_xc_filenames(s = "öüä%&/sdf__caca_.55&/())äöüöä5.mp3", max_string_size = 20)
-
-    
-
-
