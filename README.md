@@ -70,20 +70,16 @@ xc.extract_spectrograms(fs_tag = 24000, segm_duration = 2.0, segm_step = 0.5,
 ```
 dev_scripts/             # Misc code used fo development
 images/                  # Images for the readme
-sample_code/             # Demo scripts
 src/                     # Main XCO class and functionality
 tests/                   # For code testing
 pyproject.toml           # Setup info for building package  
 requirements.txt         # To install dependencies for devel
+sample_code.py           # Demo scripts
 ```
 
 ## Useful links
 * https://creativecommons.org/licenses/
 * https://xeno-canto.org/explore/api
-
-## Limitation
-* Only 1 country and 1 species per request allowed by XC API
-* Only 1 request per second allowed by XC API
 
 ## License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
