@@ -18,6 +18,23 @@ import struct
 import subprocess
 import datetime
 import getpass
+from scipy.interpolate import interp1d
+
+
+# draft provied by https://chatgpt.com, edited by Serge
+def log_scale_spectrogram(S, fmin=0.01, bins=128):
+    """
+    """
+    n_freqs, _ = S.shape
+    lin_freqs = np.linspace(0, 0.5, n_freqs)
+    log_freqs = np.logspace(np.log10(fmin), np.log10(0.5), bins)
+    # Interpolator over the frequency axis
+    interp_func = interp1d(lin_freqs, S, axis=0, bounds_error=False, fill_value=0.0)
+    S_log = interp_func(log_freqs)
+    return(S_log) 
+
+
+
 
 class XCO():
 
@@ -249,7 +266,7 @@ class XCO():
             print("Done! successfully converted: " + str(ii+1-n_fails) + ' files' + ', failed: ' + str(n_fails))
 
     def extract_spectrograms(self, fs_tag, segm_duration, segm_step = 1.0, win_siz = 256, win_olap = 128,  
-                             specsub = True, max_segm_per_file = None, colormap = 'gray', eps = 1e-10, verbose = False):
+                             specsub = True, log_f_min = None, max_segm_per_file = None, colormap = 'gray', eps = 1e-10, verbose = False):
         """
         Description : Process wav file by segments, for each segment makes a spectrogram, and saves a PNG
         Arguments : 
@@ -356,15 +373,24 @@ class XCO():
                             mode = 'psd')
                         # remove nyquist freq
                         X = X[:-1, :]
-                        # transpose, spectral spectral subtraction and log-transform 
-                        X = np.flip(X, axis=0) # so that high freqs at top of image 
-
+                           
+                        # log-transform 
                         X = np.log10(X + eps)
 
+                        # spectral subtraction
                         if specsub:
                             noise_magnitude = np.median(X, axis=1, keepdims=True)
                             X = X - noise_magnitude
                             X = np.maximum(X, 0.0)  
+
+                        # log mapping of freqs
+                        if log_f_min is not None:
+                            X = log_scale_spectrogram(S = X, fmin=log_f_min, bins=X.shape[0])
+
+                        # transpose
+                        X = np.flip(X, axis=0) # so that high freqs at top of image 
+                        # print('flip:' , X.shape)
+
 
                         # normalize 
                         X = X - X.min()

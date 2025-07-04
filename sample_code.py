@@ -48,15 +48,26 @@ xc.mp3_to_wav(conversion_fs = 24000)
 # Extract spectrograms from segments and store as PNG
 xc.extract_spectrograms(
     fs_tag = 24000, 
-    segm_duration = 1.0, 
+    segm_duration = 2.0, 
     segm_step = 0.5, 
     win_siz = 512, 
     win_olap = 192, 
     max_segm_per_file = 10, 
     specsub = True, 
+    log_f_min = 0.005,
     colormap='viridis',
     verbose=True
     )
+
+
+# xx = xc.tempX
+# xx.shape
+# yy = log_scale_spectrogram(S = xx, fmin=0.0001, bins=512)
+# yy.shape
+
+
+
+
 
 #---------------------------------------
 # Open a new session
