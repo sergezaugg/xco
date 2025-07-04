@@ -20,5 +20,5 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-*.wav
+# *.wav
 *.mp3
