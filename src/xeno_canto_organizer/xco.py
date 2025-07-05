@@ -30,6 +30,12 @@ class XCO():
         self.start_path = start_path 
         self.download_tag = 'downloaded_data' 
         self.recs_pool = []
+        if not os.path.isdir(start_path):
+            os.makedirs(start_path)
+            print("A new empty directory '" + start_path + "' was created")
+        else:
+            n_items = len(os.listdir(start_path))
+            print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")    
 
     #----------------------------------
     # (1) helper functions
@@ -229,7 +235,7 @@ class XCO():
         df_all_extended['file_name_stub'] = new_filename 
         df_all_extended['full_spec_name'] = df_all_extended['gen'] + ' ' +  df_all_extended['sp']
         df_all_extended.to_pickle(os.path.join(self.start_path, self.download_tag + '_meta.pkl') )
-        print("Done! downloaded " + str(i+1) + " files") 
+        print("Done! downloaded " + str(self.df_recs.shape[0]) + " files") 
 
     def mp3_to_wav(self, conversion_fs, verbose = False):
             """   
