@@ -35,7 +35,20 @@ class XCO():
             print("A new empty directory '" + start_path + "' was created")
         else:
             n_items = len(os.listdir(start_path))
-            print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")    
+            print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")  
+
+        # get API key 
+        class R: 
+            status_code = 'initial'
+        r = R
+        while r.status_code != 200:
+            self.__apikey = getpass.getpass("API v3 Key: ")  
+            query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">14"len:"<14"&key=' + '&key=' + self.__apikey
+            full_query_string = self.XC_API_URL + query_string
+            r = requests.get(full_query_string, allow_redirects=True)
+            print(r.status_code) 
+       
+
 
     #----------------------------------
     # (1) helper functions
@@ -129,11 +142,11 @@ class XCO():
         """ 
         Description: Prepares a data frame with info (XC metadata) on files to be downloaded 
         """
-        # if full_query_string is not None:
-        try:
-            self.__apikey
-        except:    
-            self.__apikey = getpass.getpass("Key for XC-API-3: ")
+        # # if full_query_string is not None:
+        # try:
+        #     self.__apikey
+        # except:    
+        #     self.__apikey = getpass.getpass("Key for XC-API-3: ")
         # helper functions 
         def aq(s):
             return('"' + s + '"')

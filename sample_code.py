@@ -24,7 +24,7 @@ print(xc.df_recs['full_spec_name'].value_counts())
 print(xc.df_recs['smp'].value_counts())
 # if session was closed
 xc.reload_local_summary()
-# Download the mp3 files 
+# Trigger download of mp3 files 
 xc.download_audio_files(verbose=True)
 # Convert mp3s to wav with a specific sampling rate (requires ffmpeg to be installed)
 xc.mp3_to_wav(conversion_fs = 44100)
