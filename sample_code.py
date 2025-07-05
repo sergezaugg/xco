@@ -8,11 +8,14 @@
 # detailed usage example
 import xeno_canto_organizer.xco as xco
 
+import os, getpass
+os.environ['xcapikey'] = getpass.getpass("XC API Key: ")  
+
+
 #---------------------------------
 # (Example 1) custom search can be run sequentially - xc.recs_pool accumulates the meta-data 
-# On first use of download_summary xc api key must be provided
-# create instance if XCO and an empty dir at 'start_path'
-xc = xco.XCO(start_path = './temp_xc_project_01')
+# create instance of XCO - triggers creation of empty dir at 'start_path' - requests api key  
+xc = xco.XCO(start_path = './temp_xc_project_01') 
 xc.download_summary(gen = "Corvus", sp = "corax", cnt = "switzerland", q = "A", len_max = 200, smp_min = 44100, verbose=True)
 xc.download_summary(gen = "Pyrrhocorax",          cnt = "France",      q = "B", len_max = 5,   smp_min = 44100, verbose=True)
 xc.download_summary(gen = "Coloeus",              cnt = "Belgium",     q = "C", len_max = 50 , smp_min = 44100, verbose=True)

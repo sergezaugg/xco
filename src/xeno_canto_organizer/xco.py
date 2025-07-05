@@ -28,25 +28,29 @@ class XCO():
                  ):
         self.XC_API_URL = XC_API_URL
         self.start_path = start_path 
-        self.download_tag = 'downloaded_data' 
-        self.recs_pool = []
+        self.download_tag = 'downloaded_data' # hard-coded name used in methods 
+        self.recs_pool = [] # this list will be used to store xc-records info
         if not os.path.isdir(start_path):
             os.makedirs(start_path)
             print("A new empty directory '" + start_path + "' was created")
         else:
             n_items = len(os.listdir(start_path))
             print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")  
-
-        # get API key 
-        class R: 
-            status_code = 'initial'
-        r = R
-        while r.status_code != 200:
-            self.__apikey = getpass.getpass("API v3 Key: ")  
-            query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">14"len:"<14"&key=' + '&key=' + self.__apikey
+        
+        # Check API key 
+        self.__keykey = 'xcapikey'
+        if os.getenv(self.__keykey) is None:
+            print ("Please provide xcapikey via environment variables")    
+        else:
+            # test connection 
+            query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">15"len:"<15"&key=' + '&key=' + os.getenv(self.__keykey)
             full_query_string = self.XC_API_URL + query_string
             r = requests.get(full_query_string, allow_redirects=True)
-            print(r.status_code) 
+            print('Status_code: ', r.status_code) 
+            if r.status_code != 200:
+                print ("Warning : xc-api-key not valid!")   
+            else: 
+                print("Success : xc-api-key OK")
        
 
 
@@ -142,12 +146,7 @@ class XCO():
         """ 
         Description: Prepares a data frame with info (XC metadata) on files to be downloaded 
         """
-        # # if full_query_string is not None:
-        # try:
-        #     self.__apikey
-        # except:    
-        #     self.__apikey = getpass.getpass("Key for XC-API-3: ")
-        # helper functions 
+        # local helper functions 
         def aq(s):
             return('"' + s + '"')
         def nq_min(f):
@@ -170,13 +169,13 @@ class XCO():
         page_counter = '&page=1'
         while not last_page_reached: 
             # construct final query key
-            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter + '&key=' + self.__apikey
+            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter + '&key=' + os.getenv(self.__keykey)
             full_query_string = self.XC_API_URL + query_string
             # API requests:
             r = requests.get(full_query_string, allow_redirects=True)
             # handle if invalid key 
             if r.status_code == 401:
-                del(self.__apikey)
+                # del(self.__apikey)
                 return(r)
             elif r.status_code != 200:   
                 return(r)
