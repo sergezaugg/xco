@@ -40,7 +40,7 @@ class XCO():
         # Check API key 
         self.__keykey = 'xcapikey'
         if os.getenv(self.__keykey) is None:
-            print ("Please provide xcapikey via environment variables")    
+            print ("Warning : xcapikey not in environment variables: download_summary() will not work")    
         else:
             # test connection 
             query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">15"len:"<15"&key=' + '&key=' + os.getenv(self.__keykey)
@@ -146,6 +146,9 @@ class XCO():
         """ 
         Description: Prepares a data frame with info (XC metadata) on files to be downloaded 
         """
+        if os.getenv(self.__keykey) is None:
+            raise ValueError("download_summary() need xc-api-key in the environment variables")
+        
         # local helper functions 
         def aq(s):
             return('"' + s + '"')
@@ -206,6 +209,8 @@ class XCO():
     def compile_df_and_save(self, verbose = False):
         """
         """
+        if len(self.recs_pool)<=0:
+            raise ValueError("self.recs_pool is empty, Please use download_summary() first ")
         self.df_recs = pd.DataFrame(self.recs_pool)
         self.df_recs['full_spec_name'] = self.df_recs['gen'] + ' ' +  self.df_recs['sp']
         if verbose: print("Before removing duplicates: ", self.df_recs.shape)

@@ -8,6 +8,7 @@
 # detailed usage example
 import xeno_canto_organizer.xco as xco
 
+# Store API key in env variable of current session - needed for download_summary()
 import os, getpass
 os.environ['xcapikey'] = getpass.getpass("XC API Key: ")  
 
