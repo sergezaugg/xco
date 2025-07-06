@@ -19,7 +19,27 @@ import struct
 import subprocess
 import datetime
 import getpass
+import gc
 
+def api_key_to_env(XC_API_URL = 'https://xeno-canto.org/api/3/recordings'):
+    """
+    Prompt user to pass api key securely via getpass and store it temporary as an env variable
+    """
+    class R: 
+        status_code = 'initial'
+    r = R
+    while r.status_code != 200:
+        apikey = getpass.getpass("API v3 Key: ")  
+        query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">14"len:"<14"&key=' 
+        r = requests.get(XC_API_URL + query_string + '&key=' + apikey, allow_redirects=True)
+        if r.status_code != 200:
+            print("Error : Key returns status code: ", r.status_code)
+    print("Success : API-key OK")
+    # set the key to env var 
+    os.environ['v8g3ms9ged99e'] = apikey  # illegible string is to reduce accidental printing in those bloody J-notebooks
+    del(apikey)  
+    gc.collect()
+    
 class XCO():
 
     def __init__(self, 
@@ -36,24 +56,7 @@ class XCO():
         else:
             n_items = len(os.listdir(start_path))
             print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")  
-        
-        # Check API key 
-        self.__keykey = 'xcapikey'
-        if os.getenv(self.__keykey) is None:
-            print ("Warning : xcapikey not in environment variables: download_summary() will not work")    
-        else:
-            # test connection 
-            query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">15"len:"<15"&key=' + '&key=' + os.getenv(self.__keykey)
-            full_query_string = self.XC_API_URL + query_string
-            r = requests.get(full_query_string, allow_redirects=True)
-            print('Status_code: ', r.status_code) 
-            if r.status_code != 200:
-                print ("Warning : xc-api-key not valid!")   
-            else: 
-                print("Success : xc-api-key OK")
-       
-
-
+    
     #----------------------------------
     # (1) helper functions
     
@@ -146,9 +149,9 @@ class XCO():
         """ 
         Description: Prepares a data frame with info (XC metadata) on files to be downloaded 
         """
-        if os.getenv(self.__keykey) is None:
-            raise ValueError("download_summary() need xc-api-key in the environment variables")
-        
+        if os.getenv('v8g3ms9ged99e') is None:
+            raise ValueError("Warning : xcapikey not in environment variables: download_summary() will not work")
+                
         # local helper functions 
         def aq(s):
             return('"' + s + '"')
@@ -172,13 +175,11 @@ class XCO():
         page_counter = '&page=1'
         while not last_page_reached: 
             # construct final query key
-            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter + '&key=' + os.getenv(self.__keykey)
-            full_query_string = self.XC_API_URL + query_string
+            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter 
             # API requests:
-            r = requests.get(full_query_string, allow_redirects=True)
+            r = requests.get(self.XC_API_URL + query_string + '&key=' + os.getenv('v8g3ms9ged99e'), allow_redirects=True)
             # handle if invalid key 
             if r.status_code == 401:
-                # del(self.__apikey)
                 return(r)
             elif r.status_code != 200:   
                 return(r)
