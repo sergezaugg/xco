@@ -28,28 +28,21 @@
 - e.g. ```pip install https://github.com/sergezaugg/xco/releases/download/vx.x.x/xeno_canto_organizer-x.x.x-py3-none-any.whl```
 
 ## Usage 
-- Minimal example of usage shown below and a longer example [here](sample_code.py)
+- Minimal example of usage shown below and a longer commented example [here](sample_code.py)
 
 ```python
-import os
 import xeno_canto_organizer.xco as xco
-# make a projects dir, if it does not already exist
-if not os.path.isdir('./temp_xc_project'):
-    os.makedirs('./temp_xc_project')
-# Make an instance of the XCO class and define the start path 
-xc = xco.XCO(start_path = './temp_xc_project')
-# A few examples (on first use xc api key must be provided)
-xc.download_summary(gen = "Parus",sp = "major", cnt = "Spain",q = "A", len_min = 9, len_max = 14,verbose=True)
-# compile all content gathered above into a single df
-xc.compile_df_and_save(verbose = True)
-# Download the files 
-xc.download_audio_files(verbose=True)
-# Convert mp3s to wav with a specific sampling rate (requires ffmpeg to be installed)
-xc.mp3_to_wav(conversion_fs = 24000)
-# Extract spectrograms from segments and store as PNG
-xc.extract_spectrograms(fs_tag = 24000, segm_duration = 2.0, segm_step = 0.5, 
-    win_siz = 512, win_olap = 400, max_segm_per_file = 5, specsub = True, colormap='viridis', verbose=True
-    )
+# Store API key in env variable of current session - needed for download_summary()
+xco.api_key_to_env()
+#---------------------------------
+# (Example 2) search can be based on family and larger areas + sampling rate limits 
+xc2 = xco.XCO(start_path = './temp_xc_project_02')
+xc2.download_summary(fam = "Corvidae", area = "Europe", smp_min = 16000, smp_max = 16000,  len_min = 1, len_max = 10, verbose=True)
+xc2.compile_df_and_save(verbose = True)
+xc2.download_audio_files(verbose=True)
+xc2.mp3_to_wav(conversion_fs = 8000)
+xc2.extract_spectrograms(fs_tag = 8000, segm_duration = 1.0, segm_step = 0.5, win_siz = 256, win_olap = 220.5, 
+                        max_segm_per_file = 20, specsub = True, log_f_min = None, colormap='gray')
 ```
 :smirk: Now you can throw your PyTorch magics at those PNGs :wink: 
 
@@ -59,34 +52,32 @@ xc.extract_spectrograms(fs_tag = 24000, segm_duration = 2.0, segm_step = 0.5,
 <img src="images/spectros_001.png" width="400" />
 <img src="images/spectros_002.png" width="400" />
 <img src="images/spectros_003.png" width="400" />
-<figcaption>(spectral subtraction 3-ch color, spectral subtraction 1-ch gray, 3-ch color)</figcaption>
+<!-- <figcaption>(spectral subtraction 3-ch color, spectral subtraction 1-ch gray, 3-ch color)</figcaption> -->
 
 ## Why save spectrogram of sounds as PNG images
 * It is handy because many PyTorch models and data augmentation procedures can directly ingest PNGs
 * It is handy because images can be easily visualized with standard software
-* Yes, 3-channel is an overkill but easier to be ingested by Image CNNs such as ResNet and co
+* Yes, 3-channel is an overkill for spectrograms but easier to be ingested by Image CNNs such as ResNet and co
 
 ## Project Structure
 ```
+.github/                 # Items used for continuous integration
 dev_scripts/             # Misc code used fo development
-images/                  # Images for the readme
+images/                  # Images for readme
 src/                     # Main XCO class and functionality
-tests/                   # For code testing
+tests/                   # Items for code testing
 pyproject.toml           # Setup info for building package  
 requirements.txt         # To install dependencies for devel
-sample_code.py           # Demo scripts
+sample_code.py           # Demo script
 ```
 
 ## Useful links
 * https://creativecommons.org/licenses/
 * https://xeno-canto.org/explore/api
 
-## License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
 ## Acknowledgements
 - The team and recordist of [xeno-canto.org](https://www.xeno-canto.org/) for providing open-access bird sound data.
-- The team developing [FFmpeg](https://ffmpeg.org/) which is a fantastic tool for acoustic processing.  
+- The team developing [FFmpeg](https://ffmpeg.org/) which is a fantastic tool for acoustic processing.
 
 ## Author
 - Created by [Serge Zaugg](https://www.linkedin.com/in/dkifh34rtn345eb5fhrthdbgf45/).

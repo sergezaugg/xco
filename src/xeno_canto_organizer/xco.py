@@ -19,7 +19,27 @@ import struct
 import subprocess
 import datetime
 import getpass
+import gc
 
+def api_key_to_env(XC_API_URL = 'https://xeno-canto.org/api/3/recordings'):
+    """
+    Prompt user to pass api key securely via getpass and store it temporary as an env variable
+    """
+    class R: 
+        status_code = 'initial'
+    r = R
+    while r.status_code != 200:
+        apikey = getpass.getpass("API v3 Key: ")  
+        query_string = '?query=gen:"Parus"sp:"major"+cnt:"switzerland"q:">C"len:">14"len:"<14"&key=' 
+        r = requests.get(XC_API_URL + query_string + '&key=' + apikey, allow_redirects=True)
+        if r.status_code != 200:
+            print("Error : Key returns status code: ", r.status_code)
+    print("Success : API-key OK")
+    # set the key to env var 
+    os.environ['v8g3ms9ged99e'] = apikey  # illegible string is to reduce accidental printing in those bloody J-notebooks
+    del(apikey)  
+    gc.collect()
+    
 class XCO():
 
     def __init__(self, 
@@ -28,9 +48,15 @@ class XCO():
                  ):
         self.XC_API_URL = XC_API_URL
         self.start_path = start_path 
-        self.download_tag = 'downloaded_data' 
-        self.recs_pool = []
-
+        self.download_tag = 'downloaded_data' # hard-coded name used in methods 
+        self.recs_pool = [] # this list will be used to store xc-records info
+        if not os.path.isdir(start_path):
+            os.makedirs(start_path)
+            print("A new empty directory '" + start_path + "' was created")
+        else:
+            n_items = len(os.listdir(start_path))
+            print("Warning : Directory '" + start_path + "' already exists and contains " + str(n_items) + " items.")  
+    
     #----------------------------------
     # (1) helper functions
     
@@ -109,22 +135,24 @@ class XCO():
     def download_summary(self, 
         gen = None,
         sp = None,
+        fam = None,
         cnt = None,
+        area = None,
         q = None,
         len_min = None,
-        len_max = None ,
+        len_max = None,
+        smp_min = None,
+        smp_max = None,
         verbose = False,
         # full_query_string = None
         ):
         """ 
         Description: Prepares a data frame with info (XC metadata) on files to be downloaded 
         """
-        # if full_query_string is not None:
-        try:
-            self.__apikey
-        except:    
-            self.__apikey = getpass.getpass("Key for XC-API-3: ")
-        # helper functions 
+        if os.getenv('v8g3ms9ged99e') is None:
+            raise ValueError("Warning : xcapikey not in environment variables: download_summary() will not work")
+                
+        # local helper functions 
         def aq(s):
             return('"' + s + '"')
         def nq_min(f):
@@ -134,22 +162,24 @@ class XCO():
         # handle when argument was not provided
         gen_p        = 'gen:'  + aq(gen)          if gen      is not None else ""
         sp_p         = 'sp:'   + aq(sp)           if sp       is not None else ""
+        fam_p        = 'fam:'  + aq(fam)          if fam      is not None else "" # NEW 
         cnt_p        = 'cnt:'  + aq(cnt)          if cnt      is not None else ""
+        area_p       = 'area:' + aq(area)         if area     is not None else "" # NEW 
         q_p          = 'q:'    + aq(q)            if q        is not None else ""
-        len_min_p    = 'len:'  + nq_min(len_min)  if len_min  is not None else ""
-        len_max_p    = 'len:'  + nq_max(len_max)  if len_max  is not None else ""
+        len_min_p    = 'len:'  + nq_min(len_min-1)  if len_min  is not None else ""
+        len_max_p    = 'len:'  + nq_max(len_max+1)  if len_max  is not None else ""
+        smp_min_p    = 'smp:'  + nq_min(smp_min-1)  if smp_min  is not None else "" # NEW 
+        smp_max_p    = 'smp:'  + nq_max(smp_max+1)  if smp_max  is not None else "" # NEW 
         # start 
         last_page_reached = False
         page_counter = '&page=1'
         while not last_page_reached: 
             # construct final query key
-            query_string = '?query=' + gen_p + sp_p + cnt_p + q_p + len_min_p + len_max_p + page_counter + '&key=' + self.__apikey
-            full_query_string = self.XC_API_URL + query_string
+            query_string = '?query=' + gen_p + sp_p + fam_p + cnt_p + area_p + q_p + len_min_p + len_max_p + smp_min_p + smp_max_p + page_counter 
             # API requests:
-            r = requests.get(full_query_string, allow_redirects=True)
+            r = requests.get(self.XC_API_URL + query_string + '&key=' + os.getenv('v8g3ms9ged99e'), allow_redirects=True)
             # handle if invalid key 
             if r.status_code == 401:
-                del(self.__apikey)
                 return(r)
             elif r.status_code != 200:   
                 return(r)
@@ -180,6 +210,8 @@ class XCO():
     def compile_df_and_save(self, verbose = False):
         """
         """
+        if len(self.recs_pool)<=0:
+            raise ValueError("self.recs_pool is empty, Please use download_summary() first ")
         self.df_recs = pd.DataFrame(self.recs_pool)
         self.df_recs['full_spec_name'] = self.df_recs['gen'] + ' ' +  self.df_recs['sp']
         if verbose: print("Before removing duplicates: ", self.df_recs.shape)
@@ -221,7 +253,7 @@ class XCO():
         df_all_extended['file_name_stub'] = new_filename 
         df_all_extended['full_spec_name'] = df_all_extended['gen'] + ' ' +  df_all_extended['sp']
         df_all_extended.to_pickle(os.path.join(self.start_path, self.download_tag + '_meta.pkl') )
-        print("Done! downloaded " + str(i+1) + " files") 
+        print("Done! downloaded " + str(self.df_recs.shape[0]) + " files") 
 
     def mp3_to_wav(self, conversion_fs, verbose = False):
             """   
