@@ -1,6 +1,9 @@
 # -------------
 # Author : Serge Zaugg
 # Description : Main functionality of codebase
+# mini-cheat-sheet
+# to work in dev:           pip install --upgrade -e .
+# conf no-direct-imports:   pip uninstall train_saec
 # -------------
 
 import os
@@ -234,26 +237,34 @@ class XCO():
         source_path = os.path.join(self.start_path, self.download_tag + '_orig')
         if not os.path.exists(source_path):
             os.mkdir(source_path)
+        pre_downloaded_mp3_li = [a for a in os.listdir(source_path) if '.mp3' in a]
         # download one file for each row
         new_filename = []
         for i,row_i in self.df_recs.iterrows():
             re_i = row_i.to_dict()
+            # simplify and clean filename
+            finam2 = self._clean_xc_filenames(s = re_i["file-name"], max_string_size = 30)
+            new_filename.append(finam2)
+            # print("finam2: ", finam2)
+            if finam2 + '.mp3' in pre_downloaded_mp3_li:
+                if verbose:
+                    print("Already downloaded: ", re_i["file-name"])
+                continue
             if verbose:
-                print("Downloading file: ", re_i["file-name"])
+                print("Downloading file:   ", re_i["file-name"])
             full_download_string = re_i["file"]
             # actually download files 
             rq = requests.get(full_download_string, allow_redirects=True)
-            # simplify and clean filename
-            finam2 = self._clean_xc_filenames(s = re_i["file-name"], max_string_size = 30)
             # write file to disc
-            open(os.path.join(source_path, finam2 + '.mp3') , 'wb').write(rq.content)
-            new_filename.append(finam2)
+            curr_path_to_save = os.path.join(source_path, finam2 + '.mp3')
+            open(curr_path_to_save , 'wb').write(rq.content)
+        
         # print(new_filename)
         df_all_extended = self.df_recs
         df_all_extended['file_name_stub'] = new_filename 
         df_all_extended['full_spec_name'] = df_all_extended['gen'] + ' ' +  df_all_extended['sp']
         df_all_extended.to_pickle(os.path.join(self.start_path, self.download_tag + '_meta.pkl') )
-        print("Done! downloaded " + str(self.df_recs.shape[0]) + " files") 
+        # print("Done! downloaded " + str(self.df_recs.shape[0]) + " files") 
 
     def mp3_to_wav(self, conversion_fs, verbose = False):
             """   

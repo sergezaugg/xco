@@ -8,7 +8,7 @@ include = ["xeno_canto_organizer*"]
 
 [project]
 name = "xeno_canto_organizer" 
-version = "v0.9.0"
+version = "v0.9.1"
 dependencies = [
   "scipy>=1.15",
   "pillow>=11.1",
