@@ -1,7 +1,10 @@
 # --------------
 # Author : Serge Zaugg
 # Description : Demo example of xco usage in practice
-# For dev : import src.xeno_canto_organizer.xco as xco
+# 
+# mini-cheat-sheet
+# to work in dev:           pip install --upgrade -e .
+# conf no-direct-imports:   pip uninstall train_saec
 # --------------
 
 import xeno_canto_organizer.xco as xco
