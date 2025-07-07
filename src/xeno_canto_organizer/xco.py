@@ -251,6 +251,9 @@ class XCO():
                     print("Already downloaded: ", re_i["file-name"])
                 continue
             try:
+                # print(len(re_i["file-name"]))
+                if len(re_i["file-name"]) < 5:
+                    continue
                 if verbose:
                     print("Downloading file:   ", re_i["file-name"])
                 full_download_string = re_i["file"]
