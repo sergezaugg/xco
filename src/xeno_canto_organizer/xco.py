@@ -250,15 +250,17 @@ class XCO():
                 if verbose:
                     print("Already downloaded: ", re_i["file-name"])
                 continue
-            if verbose:
-                print("Downloading file:   ", re_i["file-name"])
-            full_download_string = re_i["file"]
-            # actually download files 
-            rq = requests.get(full_download_string, allow_redirects=True)
-            # write file to disc
-            curr_path_to_save = os.path.join(source_path, finam2 + '.mp3')
-            open(curr_path_to_save , 'wb').write(rq.content)
-        
+            try:
+                if verbose:
+                    print("Downloading file:   ", re_i["file-name"])
+                full_download_string = re_i["file"]
+                # actually download files 
+                rq = requests.get(full_download_string, allow_redirects=True)
+                # write file to disc
+                curr_path_to_save = os.path.join(source_path, finam2 + '.mp3')
+                open(curr_path_to_save , 'wb').write(rq.content)
+            except:
+                print("This file could not be downloaded")
         # print(new_filename)
         df_all_extended = self.df_recs
         df_all_extended['file_name_stub'] = new_filename 
