@@ -1,19 +1,23 @@
 #--------------------------------
 # Author : Serge Zaugg
 # Description : Basic tests to check if process runs through
+# mini-cheat-sheet
+# to work in dev:           pip install --upgrade -e .
+# conf no-direct-imports:   pip uninstall train_saec
 #--------------------------------
 
 import os
 import pandas as pd 
 import shutil
-try: # import from installed (built) package if possible
-    import xeno_canto_organizer
-    import xeno_canto_organizer.xco as xco
-    pkg_import_source = xeno_canto_organizer.__file__
-except: # for using test during local dev
-    import src.xeno_canto_organizer
-    import src.xeno_canto_organizer.xco as xco
-    pkg_import_source = src.xeno_canto_organizer.__file__
+
+# try: # import from installed (built) package if possible
+import xeno_canto_organizer
+import xeno_canto_organizer.xco as xco
+pkg_import_source = xeno_canto_organizer.__file__
+# except: # for using test during local dev
+#     import src.xeno_canto_organizer
+#     import src.xeno_canto_organizer.xco as xco
+#     pkg_import_source = src.xeno_canto_organizer.__file__
 
 
 #----------------------------------------------
