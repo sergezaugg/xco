@@ -1,7 +1,10 @@
 # --------------
 # Author : Serge Zaugg
 # Description : Demo example of xco usage in practice
-# For dev : import src.xeno_canto_organizer.xco as xco
+# 
+# mini-cheat-sheet
+# to work in dev:           pip install --upgrade -e .
+# conf no-direct-imports:   pip uninstall train_saec
 # --------------
 
 import xeno_canto_organizer.xco as xco
@@ -47,6 +50,7 @@ xc1.extract_spectrograms(
 xc2 = xco.XCO(start_path = './temp_xc_project_02')
 xc2.download_summary(fam = "Corvidae", area = "Europe", smp_min = 16000, smp_max = 16000,  len_min = 1, len_max = 10, verbose=True)
 xc2.compile_df_and_save(verbose = True)
+xc2.reload_local_summary()
 xc2.download_audio_files(verbose=True)
 xc2.mp3_to_wav(conversion_fs = 8000)
 xc2.extract_spectrograms(fs_tag = 8000, segm_duration = 1.0, segm_step = 0.5, win_siz = 256, win_olap = 220.5, 
